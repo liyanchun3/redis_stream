@@ -159,8 +159,13 @@ func (r *Redis) Xread(key []interface{}, id []interface{}, count interface{}, bl
 	return streams, nil
 }
 
-func (r *Redis) XgroupCreate(key, groupName, id string) (string, error) {
-	return redis.String(Do("xgroup", "create", key, groupName, id))
+func (r *Redis) XgroupCreate(key, groupName, id string,mkstream bool) (string, error) {
+	var params = make([]interface{}, 0)
+	params = append(params, "create",key,groupName,id)
+	if mkstream == true{
+		params = append(params,"mkstream")
+	}
+	return redis.String(Do("xgroup", params...))
 }
 
 func (r *Redis) XgroupDestroy(key, groupName string) (int64, error) {
